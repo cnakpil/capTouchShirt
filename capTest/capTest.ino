@@ -3,7 +3,7 @@
  * Files:            capTest.ino
  * Semester:         Spring 2022
  * 
- * Author(s):        Seren Chapin(seren.chapin@colorado.edu)
+ * Author(s):        Seren Chapin (seren.chapin@colorado.edu)
  *                   Bo Coultrip (bo.coultrip@colorado.edu)
  *                   Celine Nakpil (celine.nakpil@colorado.edu)
  * 
