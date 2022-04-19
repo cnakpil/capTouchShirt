@@ -1,3 +1,20 @@
+/* *****************************************************************************
+ * Title:            capTest
+ * Files:            capTest.ino
+ * Semester:         Spring 2022
+ * 
+ * Author(s):        Seren Chapin(seren.chapin@colorado.edu)
+ *                   Bo Coultrip (bo.coultrip@colorado.edu)
+ *                   Celine Nakpil (celine.nakpil@colorado.edu)
+ * 
+ * Description:      Code for running a Ninja game through capacitive touch pads
+ * 
+ * Written:          19 April 2022
+ * 
+ * Credits:          ADCTouch Library example code, Adafruit_NeoPixel Library example code
+ * 
+ * Bugs:             TBD
+ **************************************************************************** */
 #include <Adafruit_NeoPixel.h>
 #include <ADCTouch.h>
 
