@@ -107,6 +107,10 @@ void loop() {
       }
  }
 
+
+/**
+ * Initial reference value setup for offset management
+ */
 void ref(){
 //    ref0 = ADCTouch.read(A0, 500);    //create reference values to 
 //    ref1 = ADCTouch.read(A1, 500);    //account for the capacitance of the pad
@@ -115,6 +119,13 @@ void ref(){
     counter = 0;
 }
 
+/**
+ * Update the main color strip with the RGB values passed to the method
+ * 
+ * @param r Int value for red in RGB
+ * @param g Int value for green in RGB
+ * @param b Int value for blue in RGB
+ */
 void colorChange(int r, int g, int b){
    for(int j = 0; j<LED_COUNT; j++){
       strip.setPixelColor(j, r, g, b);
@@ -122,6 +133,13 @@ void colorChange(int r, int g, int b){
    }
 }
 
+/**
+ * Update the point system array with the next pixel in the line to the color of the capTouch pad
+ * 
+ * @param r Int value for red in RGB
+ * @param g Int value for green in RGB
+ * @param b Int value for blue in RGB
+ */
 void pointCount (int r, int g, int b){
   points.setPixelColor(pCount, r, g, b);
   points.show();
@@ -129,6 +147,9 @@ void pointCount (int r, int g, int b){
   delay(100);
 }
 
+/**
+ * Reset the appearance of the points array when run 
+ */
 void reset(){
   for (int i = 0; i<COUNT_NUM; i++){
     points.setPixelColor(i, 0, 0, 0);
