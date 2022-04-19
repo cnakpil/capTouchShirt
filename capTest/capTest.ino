@@ -2,7 +2,7 @@
 #include <ADCTouch.h>
 
 int ref0, ref1, ref2, ref3;     //reference values to remove offset
-//int counter;
+int counter;
 int breakpoint = 15;
 //int pCount[] = {0,0,0,0,0};
 int pCount = 0;
@@ -14,11 +14,7 @@ int pCount = 0;
 #define COUNT_PIN 6
 #define COUNT_NUM 5
 
-// use Adafruit_CPlay_NeoPixel to create a separate external NeoPixel strip
-//Adafruit_CPlay_NeoPixel strip = Adafruit_CPlay_NeoPixel(NUM_PIXELS, NEOPIX_PIN, NEO_GRB + NEO_KHZ800);
-//Adafruit_FloraPixel strip = Adafruit_FloraPixel(NUM_PIXELS);
-//Adafruit_NeoPixel strip(NUM_PIXELS, NEOPIX_PIN, NEO_GRB + NEO_KHZ800);
-//Adafruit_NeoPixel strip = (NUM_PIXELS, NEOPIX_PIN, NEO_GRB + NEO_KHZ800);
+// create neopixel strips
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel points(COUNT_NUM, COUNT_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -26,26 +22,27 @@ void setup()
 {
     // No pins to setup, pins can still be used regularly, although it will affect readings
 
+    // start serial
     Serial.begin(9600);
+
+    // Neopixel flora setup
     strip.begin();
     points.begin();
-//    ref0 = ADCTouch.read(A0, 500);    //create reference values to 
-//    ref1 = ADCTouch.read(A1, 500);    //account for the capacitance of the pad
-//    ref2 = ADCTouch.read(A2, 500);
-//    count = 0;
-    for(int j = 0; j<NUM_PIXELS; j++){
+    
+    for(int j = 0; j<LED_COUNT; j++){
       strip.setPixelColor(j, 50, 0, 0);
     }
     strip.show();
     strip.setBrightness(50);
     points.show();
+
+    // set reference values for capTouch pads
     ref();
-    
 } 
 
 void loop() {
   
-//    counter++;
+    counter++;
     
 //    int value0 = ADCTouch.read(A0);   //no second parameter
 //    int value1 = ADCTouch.read(A1);   //   --> 100 samples
@@ -92,12 +89,20 @@ void loop() {
       Serial.println(value3);
 
       if (value2 > breakpoint && value3 >breakpoint){
+        // if both cap touch inputs are touched, change light color and reset the point LED strip
         colorChange(128, 128, 128);
+        if (counter > 10)
+          reset();
       }else if (value3 >breakpoint) {
+        // if A3 capTouch patch high, change all light color, increment point system by 1
         colorChange(128, 128, 0);
+        pointCount(128, 128, 0);
       }else if(value2 > breakpoint){
+        // if A2 capTouch patch high, change all light color, increment point system by 1
         colorChange(0, 128, 128);
+        pointCount(128, 128, 0);
       }else{
+        // if nothing is touched, return lights to baseline color
         colorChange(50, 0, 0);
       }
  }
@@ -111,14 +116,22 @@ void ref(){
 }
 
 void colorChange(int r, int g, int b){
-   for(int j = 0; j<NUM_PIXELS; j++){
+   for(int j = 0; j<LED_COUNT; j++){
       strip.setPixelColor(j, r, g, b);
       strip.show();
    }
 }
 
-void pointCount(int r, int g, int b){
+void pointCount (int r, int g, int b){
   points.setPixelColor(pCount, r, g, b);
   points.show();
   pCount++;
+  delay(100);
+}
+
+void reset(){
+  for (int i = 0; i<COUNT_NUM; i++){
+    points.setPixelColor(i, 0, 0, 0);
+    points.show();
+  }
 }
