@@ -19,14 +19,13 @@
 #include <ADCTouch.h>
 
 int ref0, ref1, ref2, ref3;     //reference values to remove offset
-int counter;
-int breakpoint = 15;
-//int pCount[] = {0,0,0,0,0};
+int timer;
+int breakpoint = 50;
 int pCount = 0;
 #define SpeakerPin  9
 
 #define LED_PIN    11
-#define LED_COUNT 2
+#define LED_COUNT 5
 
 #define COUNT_PIN 6
 #define COUNT_NUM 5
@@ -52,14 +51,13 @@ void setup()
     strip.show();
     strip.setBrightness(50);
     points.show();
+    points.setBrightness(50);
 
     // set reference values for capTouch pads
     ref();
 } 
 
 void loop() {
-  
-    counter++;
     
 //    int value0 = ADCTouch.read(A0);   //no second parameter
 //    int value1 = ADCTouch.read(A1);   //   --> 100 samples
@@ -107,9 +105,11 @@ void loop() {
 
       if (value2 > breakpoint && value3 >breakpoint){
         // if both cap touch inputs are touched, change light color and reset the point LED strip
+        timer++;
         colorChange(128, 128, 128);
-        if (counter > 10)
+        if (timer > 15){
           reset();
+        }
       }else if (value3 >breakpoint) {
         // if A3 capTouch patch high, change all light color, increment point system by 1
         colorChange(128, 128, 0);
@@ -117,7 +117,7 @@ void loop() {
       }else if(value2 > breakpoint){
         // if A2 capTouch patch high, change all light color, increment point system by 1
         colorChange(0, 128, 128);
-        pointCount(128, 128, 0);
+        pointCount(0, 128, 128);
       }else{
         // if nothing is touched, return lights to baseline color
         colorChange(50, 0, 0);
@@ -133,7 +133,7 @@ void ref(){
 //    ref1 = ADCTouch.read(A1, 500);    //account for the capacitance of the pad
     ref2 = ADCTouch.read(A2, 500);
     ref3 = ADCTouch.read(A3, 500);
-    counter = 0;
+    timer = 0;
 }
 
 /**
@@ -152,6 +152,7 @@ void colorChange(int r, int g, int b){
 
 /**
  * Update the point system array with the next pixel in the line to the color of the capTouch pad
+ * Includes a short delay in the code to prevent accidental point counts for longer held touches. May need to be tweaked/repositioned.
  * 
  * @param r Int value for red in RGB
  * @param g Int value for green in RGB
@@ -161,7 +162,7 @@ void pointCount (int r, int g, int b){
   points.setPixelColor(pCount, r, g, b);
   points.show();
   pCount++;
-  delay(100);
+  delay(500);
 }
 
 /**
@@ -172,4 +173,7 @@ void reset(){
     points.setPixelColor(i, 0, 0, 0);
     points.show();
   }
+  pCount=0;
+  timer=0;
+  delay(500);
 }
