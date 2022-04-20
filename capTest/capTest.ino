@@ -22,13 +22,17 @@ int ref0, ref1, ref2, ref3;     //reference values to remove offset
 int timer;
 int breakpoint = 50;
 int pCount = 0;
-#define SpeakerPin  9
+
+#define GAME_OVER 2
+#define RESET 3
+#define HIT 9
 
 #define LED_PIN    11
-#define LED_COUNT 5
+#define LED_COUNT 4
 
-#define COUNT_PIN 6
+#define COUNT_PIN 10
 #define COUNT_NUM 5
+bool go = false;
 
 // create neopixel strips
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -40,6 +44,16 @@ void setup()
 
     // start serial
     Serial.begin(9600);
+
+    // speaker pin setup
+    pinMode(HIT, OUTPUT);
+    pinMode(RESET, OUTPUT);
+    pinMode(GAME_OVER, OUTPUT);
+
+    // speaker pin initial state
+    digitalWrite(HIT, HIGH);
+    digitalWrite(RESET, HIGH);
+    digitalWrite(GAME_OVER, HIGH);
 
     // Neopixel flora setup
     strip.begin();
@@ -58,21 +72,24 @@ void setup()
 } 
 
 void loop() {
-    
-//    int value0 = ADCTouch.read(A0);   //no second parameter
-//    int value1 = ADCTouch.read(A1);   //   --> 100 samples
-    int value2 = ADCTouch.read(A2);
-    int value3 = ADCTouch.read(A3);
-//
-//    if (counter > 50){
-//      Serial.print("reset");
-//      ref();
-//    }
 
-//    value0 -= ref0;       //remove offset
-//    value1 -= ref1;
-    value2 -= ref2;
-    value3 -= ref3;
+    if(pCount==4 && go==false){
+      digitalWrite(GAME_OVER, LOW);
+      delay(200);
+      digitalWrite(GAME_OVER, HIGH);
+      go=true;
+    }
+    
+    int value2 = ADCTouch.read(A2);   //no second parameter
+    int value3 = ADCTouch.read(A3);   //   --> 100 samples
+    int value4 = ADCTouch.read(A4);
+    int value5 = ADCTouch.read(A5);
+
+
+    value2 -= ref0;       //remove offset
+    value3 -= ref1;
+    value4 -= ref2;
+    value5 -= ref3;
 
 //    Serial.print(value0 > 40);    //send (boolean) pressed or not pressed
 //    Serial.print("\t");           //use if(value > threshold) to get the state of a button
@@ -109,6 +126,7 @@ void loop() {
         colorChange(128, 128, 128);
         if (timer > 15){
           reset();
+          digitalWrite(RESET, HIGH);
         }
       }else if (value3 >breakpoint) {
         // if A3 capTouch patch high, change all light color, increment point system by 1
@@ -118,6 +136,12 @@ void loop() {
         // if A2 capTouch patch high, change all light color, increment point system by 1
         colorChange(0, 128, 128);
         pointCount(0, 128, 128);
+      }else if(value4 > breakpoint){
+        colorChange(128, 0, 128);
+        pointCount(128, 0, 128);
+      }else if(value5 > breakpoint){
+        colorChange(0, 128, 0);
+        pointCount(0, 128, 0);
       }else{
         // if nothing is touched, return lights to baseline color
         colorChange(50, 0, 0);
@@ -129,10 +153,10 @@ void loop() {
  * Initial reference value setup for offset management
  */
 void ref(){
-//    ref0 = ADCTouch.read(A0, 500);    //create reference values to 
-//    ref1 = ADCTouch.read(A1, 500);    //account for the capacitance of the pad
-    ref2 = ADCTouch.read(A2, 500);
-    ref3 = ADCTouch.read(A3, 500);
+    ref0 = ADCTouch.read(A2, 500);    //create reference values to 
+    ref1 = ADCTouch.read(A3, 500);    //account for the capacitance of the pad
+    ref2 = ADCTouch.read(A4, 500);
+    ref3 = ADCTouch.read(A5, 500);
     timer = 0;
 }
 
@@ -162,7 +186,11 @@ void pointCount (int r, int g, int b){
   points.setPixelColor(pCount, r, g, b);
   points.show();
   pCount++;
-  delay(500);
+  if(go==false){
+    digitalWrite(HIT, LOW);
+    delay(500);
+    digitalWrite(HIT, HIGH); 
+  } 
 }
 
 /**
@@ -175,5 +203,7 @@ void reset(){
   }
   pCount=0;
   timer=0;
-  delay(500);
+  digitalWrite(RESET, LOW);
+  go = false;
+  delay(1000);
 }
