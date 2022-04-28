@@ -128,18 +128,18 @@ void loop() {
         }
       }else if (value3 >breakpoint) {
         // if A3 capTouch patch high, change all light color, increment point system by 1
-        colorChange(128, 128, 0);
-        pointCount(128, 128, 0);
+        colorChange(0, 128, 128); //cyan
+        pointCount(0, 128, 128);
       }else if(value2 > breakpoint){
         // if A2 capTouch patch high, change all light color, increment point system by 1
-        colorChange(0, 128, 128);
-        pointCount(0, 128, 128);
-      }else if(value4 > breakpoint){
-        colorChange(128, 0, 128);
-        pointCount(128, 0, 128);
-      }else if(value5 > breakpoint){
-        colorChange(0, 128, 0);
+        colorChange(0, 128, 0); //green
         pointCount(0, 128, 0);
+      }else if(value4 > breakpoint){
+        colorChange(255,192,203); //pink
+        pointCount(255,192,203);
+      }else if(value5 > breakpoint){
+        colorChange(128, 128, 0); //yellow
+        pointCount(128, 128, 0);
       }else{
         // if nothing is touched, return lights to baseline color
         colorChange(50, 0, 0);
