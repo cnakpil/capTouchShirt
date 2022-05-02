@@ -8,6 +8,7 @@
  * Description:      Code for running a Ninja game through capacitive touch pads
  * 
  * Written:          19 April 2022
+ * Updated:          02 May 2022
  * 
  * Credits:          ADCTouch Library example code, Adafruit_NeoPixel Library example code
  * 
