@@ -11,7 +11,7 @@
  * 
  * Credits:          ADCTouch Library example code, Adafruit_NeoPixel Library example code
  * 
- * Bugs:             None as of 27 April 2022
+ * Bugs:             Game over does not trigger consistently. Unsure as to cause.
  **************************************************************************** */
 #include <Adafruit_NeoPixel.h>
 #include <ADCTouch.h>
