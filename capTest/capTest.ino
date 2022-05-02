@@ -26,7 +26,7 @@ int pCount = 0;
 #define HIT 9
 
 #define LED_PIN    11
-#define LED_COUNT 4
+#define LED_COUNT 5
 
 #define COUNT_PIN 10
 #define COUNT_NUM 5
@@ -71,11 +71,11 @@ void setup()
 
 void loop() {
 
-    if(pCount==4 && go==false){
+    if(pCount==5 && go==false){ // trigger game over
       digitalWrite(GAME_OVER, LOW);
       delay(200);
       digitalWrite(GAME_OVER, HIGH);
-      go=true;
+      go=true;  // resets to not go
     }
     
     int value2 = ADCTouch.read(A2);   //no second parameter
@@ -107,18 +107,18 @@ void loop() {
 //    Serial.println(value2);
 //    delay(100);
 
-      Serial.print(value2 > 40);
+      Serial.print(value3 > 40);
       Serial.print("\t");
 
-      Serial.println(value3 > 40);
+      Serial.println(value5 > 40);
       Serial.print("\t\t");
 
-      Serial.println(value2);
+      Serial.println(value3);
       Serial.print("\t");
 
-      Serial.println(value3);
-
-      if (value2 > breakpoint && value3 >breakpoint){
+      Serial.println(value5);
+      
+      if (value3 > breakpoint && value5 >breakpoint){
         // if both cap touch inputs are touched, change light color and reset the point LED strip
         timer++;
         colorChange(128, 128, 128);
@@ -126,18 +126,18 @@ void loop() {
           reset();
           digitalWrite(RESET, HIGH);
         }
-      }else if (value3 >breakpoint) {
+      }else if (value3 > breakpoint && go==false) {
         // if A3 capTouch patch high, change all light color, increment point system by 1
         colorChange(0, 128, 128); //cyan
         pointCount(0, 128, 128);
-      }else if(value2 > breakpoint){
+      }else if(value2 > breakpoint && go==false){
         // if A2 capTouch patch high, change all light color, increment point system by 1
         colorChange(0, 128, 0); //green
         pointCount(0, 128, 0);
-      }else if(value4 > breakpoint){
-        colorChange(255,192,203); //pink
-        pointCount(255,192,203);
-      }else if(value5 > breakpoint){
+      }else if(value4 > breakpoint && go==false){
+        colorChange(128,0,128); //pink
+        pointCount(128,0,128);
+      }else if(value5 > breakpoint && go==false){
         colorChange(128, 128, 0); //yellow
         pointCount(128, 128, 0);
       }else{
